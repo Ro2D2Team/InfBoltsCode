@@ -15,19 +15,27 @@ import java.util.List;
 public class SampleOpModeHulk extends  LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime() , timeGetVoltage = new ElapsedTime();
 
-    double  PrecisionDenominator=1, PrecisionDenominator2=1.25;
-    double Kp4Bar = 0.08;
+    double  PrecisionDenominator=1, PrecisionDenominator2=1.75;
+    double Kp4Bar = 0.008;
     double Ki4Bar = 0;
-    double Kd4Bar = 0.0055;
+    double Kd4Bar = 0.001;
+    int junctionHeight = 0;
+    double outtakeStatus=0, fourBarStatus = 0, ghidajStatus = 0;
+
+    double pozCollectGround = 35, pozCollectFirst=55, pozCollectSecond=75, pozCollectThird=95, pozCollectFourth=115,
+            pozCollectFifth = 135, pozPlace=300;
+
+    int status = 0;
+    int pozStack = 1;
     public void robotCentricDrive(DcMotor leftFront,DcMotor leftBack,DcMotor rightFront,DcMotor rightBack, double  lim, boolean StrafesOn , double LeftTrigger,  double RightTrigger)
     {
-        double y = gamepad1.right_stick_y; // Remember, this is reversed!
-        double x = gamepad1.right_stick_x*1.1;
+        double y = gamepad1.left_stick_y; // Remember, this is reversed!
+        double x = gamepad1.left_stick_x*1.1;
         if (StrafesOn == false)
         {
             x=0;
         }
-        double rx = gamepad1.left_stick_x*1 - LeftTrigger + RightTrigger;
+        double rx = gamepad1.right_stick_x*1 - LeftTrigger + RightTrigger;
 
         rx/=PrecisionDenominator2;
         x/=PrecisionDenominator;
@@ -93,8 +101,15 @@ public class SampleOpModeHulk extends  LinearOpMode {
         double loopTime = 0;
 
         ClawController clawController = new ClawController();
+        FourBarController fourBarController = new FourBarController();
+        LiftController liftController = new LiftController();
+        GhidajController ghidajController = new GhidajController();
+        RobotController robotController = new RobotController();
+        fourBarController.CurrentStatus = FourBarController.fourBarStatus.COLLECT_DRIVE;
         clawController.CurrentStatus = ClawController.closeClawStatus.OPEN;
-        clawController.update(robot);
+        liftController.CurrentStatus = LiftController.liftStatus.GROUND;
+        ghidajController.CurrentStatus = GhidajController.ghidajStatus.INTAKE;
+        //clawController.update(robot);
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
 
         for (LynxModule hub : allHubs) {
@@ -105,10 +120,10 @@ public class SampleOpModeHulk extends  LinearOpMode {
         DcMotor leftFront = null;
         DcMotor leftBack = null;
         SimplePIDController motor4BarPID = new SimplePIDController(0.02,0,0);
-        rightFront = hardwareMap.get(DcMotor.class,"leftFront");
-        leftFront = hardwareMap.get(DcMotor.class,"rightFront");
-        rightBack = hardwareMap.get(DcMotor.class,"leftBack");
-        leftBack = hardwareMap.get(DcMotor.class,"rightBack");
+        leftFront = hardwareMap.get(DcMotor.class,"leftFront");
+        rightFront = hardwareMap.get(DcMotor.class,"rightFront");
+        leftBack = hardwareMap.get(DcMotor.class,"leftBack");
+        rightBack = hardwareMap.get(DcMotor.class,"rightBack");
 
 
         leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -135,7 +150,7 @@ public class SampleOpModeHulk extends  LinearOpMode {
         waitForStart();
         runtime.reset();
         double lim = 1 ; /// limita vitezei la sasiu
-        boolean StrafesOn = true;
+        boolean StrafesOn = false;
         int pozHigh = 1700;
         String typeOfDrive = "RobotCentric";
         SimplePIDController hello = new SimplePIDController(Kp4Bar,Ki4Bar,Kd4Bar);
@@ -146,18 +161,35 @@ public class SampleOpModeHulk extends  LinearOpMode {
             currentGamepad1.copy(gamepad1);
             currentGamepad2.copy(gamepad2);
             int Motor4BarPosition = robot.motor4Bar.getCurrentPosition();
-            double powerMotor4Bar = hello.update(Motor4BarPosition);
-            powerMotor4Bar = Math.max(-1,Math.min(powerMotor4Bar,1));
-            robot.motor4Bar.setPower(powerMotor4Bar);
+            int fourBarPosition = robot.motor4Bar.getCurrentPosition();
+            int liftPosition = robot.extensieOuttake.getCurrentPosition();
             robotCentricDrive(leftFront, leftBack, rightFront, rightBack, lim,StrafesOn , 0,0);
 
-            if (!previousGamepad2.circle && currentGamepad2.circle)
+            if (currentGamepad1.right_trigger>0)
             {
-                robot.extensieOuttake.setTargetPosition(pozHigh);
-                robot.extensieOuttake.setPower(1);
-                robot.extensieOuttake.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                PrecisionDenominator=2.25;
+                PrecisionDenominator2=2.75;
             }
-            if (!previousGamepad2.left_bumper && currentGamepad2.left_bumper)
+            else
+            {
+                PrecisionDenominator=1;
+                PrecisionDenominator2=1.75;
+            }
+            /*if (!previousGamepad1.circle && currentGamepad1.circle)
+            {
+               if (outtakeStatus==0)
+               {
+                   liftController.CurrentStatus = LiftController.liftStatus.POLE;
+                   outtakeStatus=1;
+               }
+               else
+               {
+                   liftController.CurrentStatus = LiftController.liftStatus.GROUND;
+                   outtakeStatus=0;
+               }
+
+            }*/
+            if (!previousGamepad1.square && currentGamepad1.square)
             {
                 if (clawController.CurrentStatus == ClawController.closeClawStatus.CLOSED)
                 {
@@ -167,18 +199,82 @@ public class SampleOpModeHulk extends  LinearOpMode {
                 {
                     clawController.CurrentStatus = ClawController.closeClawStatus.CLOSED;
                 }
+
             }
-            if (!previousGamepad2.square && currentGamepad2.square)
+            if (!previousGamepad1.cross && currentGamepad1.cross)
             {
-                hello.targetValue = 200;
+                if (fourBarStatus==0)
+                {
+                    fourBarController.CurrentStatus = FourBarController.fourBarStatus.PLACE_POSITION;
+                    fourBarStatus=1;
+                }
+                else
+                {
+                    fourBarController.CurrentStatus = FourBarController.fourBarStatus.COLLECT_DRIVE;
+                    fourBarStatus=0;
+                }
+
             }
-            if (!previousGamepad2.cross && currentGamepad2.cross)
+            if (!previousGamepad1.triangle && currentGamepad1.triangle)
             {
-                hello.targetValue = 0;
+                if (ghidajStatus==0)
+                {
+                    ghidajController.CurrentStatus = GhidajController.ghidajStatus.OUTTAKE;
+                    ghidajStatus=1;
+                }
+                else
+                {
+                    ghidajController.CurrentStatus = GhidajController.ghidajStatus.INTAKE;
+                    ghidajStatus=0;
+                }
             }
+
+            if (!previousGamepad1.right_bumper && currentGamepad1.right_bumper)
+            {
+                if (status==0)
+                {
+                    junctionHeight = 0;
+                    robotController.CurrentStatus = RobotController.RobotControllerStatus.PICK_UP_CONE;
+                    status=1;
+                }
+                else if (status==1)
+                {
+                    robotController.CurrentStatus = RobotController.RobotControllerStatus.PLACE;
+                    status=0;
+                }
+            }
+            if (!previousGamepad1.left_bumper && currentGamepad1.left_bumper)
+            {
+                if (junctionHeight==0) junctionHeight=1;
+                else if (junctionHeight==1) junctionHeight=2;
+                else if (junctionHeight==2) junctionHeight=0;
+            }
+            if (!previousGamepad1.dpad_up && currentGamepad1.dpad_up)
+            {
+                liftController.CurrentStatus = LiftController.liftStatus.POLE;
+                pozStack = Math.min(pozStack+1,5);
+                junctionHeight = pozStack + 3;
+            }
+            if (!previousGamepad1.dpad_down && currentGamepad1.dpad_down)
+            {
+                liftController.CurrentStatus = LiftController.liftStatus.POLE;
+                pozStack = Math.max(pozStack-1,1);
+                junctionHeight = pozStack + 3;
+            }
+            fourBarController.update(robot , fourBarPosition,14 );
             clawController.update(robot);
-            telemetry.addData("CurrentPositionOuttake", robot.extensieOuttake.getCurrentPosition());
+            liftController.update(robot,junctionHeight, liftPosition, currentVoltage);
+            ghidajController.update(robot);
+            robotController.update(robot, fourBarController, ghidajController, liftController, clawController, junctionHeight, fourBarPosition);
+            telemetry.addData("CurrentPositionOuttake", liftPosition);
+            telemetry.addData("liftPower", robot.extensieOuttake.getPower());
             telemetry.addData("CurrentPosition4Bar",robot.motor4Bar.getCurrentPosition());
+            telemetry.addData("Claw",robot.servoGheara.getPosition());
+            telemetry.addData("clawController", clawController.CurrentStatus);
+            telemetry.addData("4BarStatus" , fourBarController.CurrentStatus);
+            telemetry.addData("junctionHeight", junctionHeight);
+
+
             telemetry.update();
         }
     }

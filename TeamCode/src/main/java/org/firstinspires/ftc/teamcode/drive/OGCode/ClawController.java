@@ -9,9 +9,10 @@ public class ClawController {
         INIT,
         CLOSED,
         OPEN,
+        OPEN_INTERMEDIARY
     }
     public static closeClawStatus CurrentStatus = closeClawStatus.INIT,  PreviousStatus = closeClawStatus.INIT;
-    double pozOpenClaw = 0, pozCloseClaw = 1;
+    double pozOpenClaw = 0.8, pozIntermediary=0.75, pozCloseClaw = 0.5;
 
     public void update(RobotMap Robotel)
     {
@@ -22,6 +23,11 @@ public class ClawController {
                 case CLOSED:
                 {
                     Robotel.servoGheara.setPosition(pozCloseClaw);
+                    break;
+                }
+                case OPEN_INTERMEDIARY:
+                {
+                    Robotel.servoGheara.setPosition(pozIntermediary);
                     break;
                 }
                 case OPEN:

@@ -17,12 +17,12 @@ import java.util.List;
 @Autonomous(group = "Testers")
 public class motor4BarTestEncoder extends LinearOpMode {
     public static double DISTANCE = 60; // in
-    public static double Kp = 0.08;
+    public static double Kp = 0;
     public static double Ki = 0;
-    public static double Kd = 0.0055;
+    public static double Kd = 0;
     public static double Kg = 0;
-    public static double maxSpeed = 1;
-    public static double RetractedPosition = 0 , ExtendedPosition = 150;
+    public static double maxSpeed = 0.8;
+    public static double RetractedPosition = 0 , ExtendedPosition = 1200;
     int TargetLift = 0;
     ElapsedTime timerPID = new ElapsedTime();
 

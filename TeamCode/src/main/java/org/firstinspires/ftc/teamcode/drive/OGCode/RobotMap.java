@@ -40,7 +40,7 @@ public class RobotMap {
 
         extensieOuttake = Init.get(DcMotorEx.class, "extensieOuttake");
         extensieOuttake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        extensieOuttake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        extensieOuttake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         extensieOuttake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         extensieOuttake.setDirection(DcMotorSimple.Direction.REVERSE);
     }
