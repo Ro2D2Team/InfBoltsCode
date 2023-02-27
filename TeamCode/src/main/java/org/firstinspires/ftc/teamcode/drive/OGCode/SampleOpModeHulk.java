@@ -30,11 +30,7 @@ public class SampleOpModeHulk extends  LinearOpMode {
     public void robotCentricDrive(DcMotor leftFront,DcMotor leftBack,DcMotor rightFront,DcMotor rightBack, double  lim, boolean StrafesOn , double LeftTrigger,  double RightTrigger)
     {
         double y = gamepad1.left_stick_y; // Remember, this is reversed!
-        double x = gamepad1.left_stick_x*1.1;
-        if (StrafesOn == false)
-        {
-            x=0;
-        }
+        double x = -gamepad1.left_stick_x*1.1;
         double rx = gamepad1.right_stick_x*1 - LeftTrigger + RightTrigger;
 
         rx/=PrecisionDenominator2;
