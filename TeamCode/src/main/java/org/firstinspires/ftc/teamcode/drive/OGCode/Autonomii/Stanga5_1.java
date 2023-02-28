@@ -41,10 +41,10 @@ public class Stanga5_1 extends LinearOpMode {
         PLACE_STACK_CONE,
         PARK
     }
-    public static double x_PLACE_PRELOAD = -27.5, y_PLACE_PRELOAD = -5.5, Angle_PLACE_PRELOAD = 225, backPreload = 43;
+    public static double x_PLACE_PRELOAD = -27.5, y_PLACE_PRELOAD = -5, Angle_PLACE_PRELOAD = 240, backPreload = 43;
     public static double x_GTS_FIRST_LT1 = -31, y_GTS_FIRST_LT1 = -7.5,
             x_GTS_FIRST_STS = -40, y_GTS_FIRST_STS = -12, Angle_GTS_FIRST = 180,
-            x_GTS_FIRST_LT2 = -65, y_GTS_FIRST_LT2 = -12;
+            x_GTS_FIRST_LT2 = -64, y_GTS_FIRST_LT2 = -15.5;
     public static double x_PLACE_FIRST_LT1 = -40, y_PLACE_FIRST_LT1 = -12,
             x_PLACE_FIRST_STS = -29, y_PLACE_FIRST_STS = -7, angle_PLACE_FIRST_STS = 255;
     int junctionHeight = 0;
@@ -87,21 +87,21 @@ public class Stanga5_1 extends LinearOpMode {
                     robotController.CurrentStatus = PICK_UP_CONE;
                 })
                 .splineToSplineHeading(new Pose2d(x_PLACE_PRELOAD,y_PLACE_PRELOAD,Math.toRadians(Angle_PLACE_PRELOAD)),Math.toRadians(45))
-                .build();
+                .build(); // merge de la inceput sa puna preload-u
         TrajectorySequence GTS_FIRST = drive.trajectorySequenceBuilder(PLACE_PRELOAD.end())
                 .lineTo(new Vector2d(x_GTS_FIRST_LT1, y_GTS_FIRST_LT1))
                 .splineToSplineHeading(new Pose2d(x_GTS_FIRST_STS, y_GTS_FIRST_STS, Math.toRadians(Angle_GTS_FIRST)), Math.toRadians(Angle_GTS_FIRST))
                 .lineTo(new Vector2d(x_GTS_FIRST_LT2,y_GTS_FIRST_LT2))
-                .build();
+                .build(); // merge de la junction la stack
         TrajectorySequence PLACE_FIRST = drive.trajectorySequenceBuilder(GTS_FIRST.end())
                 .lineTo(new Vector2d(x_PLACE_FIRST_LT1, y_PLACE_FIRST_LT1))
-                .splineToSplineHeading(new Pose2d(x_PLACE_FIRST_STS, y_PLACE_FIRST_STS, Math.toRadians(angle_PLACE_FIRST_STS)), Math.toRadians(35))
-                .build();
+                .splineToSplineHeading(new Pose2d(x_PLACE_FIRST_STS, y_PLACE_FIRST_STS, Math.toRadians(angle_PLACE_FIRST_STS)), Math.toRadians(110))
+                .build(); // merge de la stack la junction
         TrajectorySequence GTS_FIRST_SECOND = drive.trajectorySequenceBuilder(PLACE_FIRST.end())
                 .lineTo(new Vector2d(x_GTS_FIRST_LT1, y_GTS_FIRST_LT1))
                 .splineToSplineHeading(new Pose2d(x_GTS_FIRST_STS, y_GTS_FIRST_STS, Math.toRadians(Angle_GTS_FIRST)), Math.toRadians(Angle_GTS_FIRST))
-                .lineTo(new Vector2d(x_GTS_FIRST_LT2,y_GTS_FIRST_LT2))
-                .build();
+                .lineTo(new Vector2d(-66,-12))
+                .build(); // merge de la junction la stack
         TrajectorySequence PARK_1 = drive.trajectorySequenceBuilder(PLACE_FIRST.end())
                 .lineTo(new Vector2d(x_GTS_FIRST_LT1, y_GTS_FIRST_LT1))
                 .splineToSplineHeading(new Pose2d(x_GTS_FIRST_STS, y_GTS_FIRST_STS, Math.toRadians(Angle_GTS_FIRST)), Math.toRadians(Angle_GTS_FIRST))
@@ -111,7 +111,7 @@ public class Stanga5_1 extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(-38.5,-15,Math.toRadians(270)))
                 .build();
         TrajectorySequence PARK_3 = drive.trajectorySequenceBuilder(PLACE_FIRST.end())
-                .lineToLinearHeading(new Pose2d(-10,-15,Math.toRadians(270)))
+                .lineToLinearHeading(new Pose2d(-12,-10,Math.toRadians(270)))
                 .build();
         while (!isStarted()&&!isStopRequested())
         {

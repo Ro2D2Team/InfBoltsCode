@@ -13,7 +13,7 @@ public class FourBarController {
         INTER_POSITION
     }
     public static fourBarStatus CurrentStatus = fourBarStatus.INIT,  PreviousStatus = fourBarStatus.INIT;
-    double pozPlace = 1200, pozCollect = 0, pozSecondCone = 55, pozThirdCone=75, pozFourthCone = 95, pozFifthCone=115, pozInter=1000;
+    double pozPlace = 1200, pozCollect = 0, pozSecondCone = 55, pozThirdCone=75, pozFourthCone = 95, pozFifthCone=115, pozInter=900;
     double Kp4Bar = 0.0018;
     double Ki4Bar = 0;
     double Kd4Bar = 0.0001;
