@@ -19,9 +19,15 @@ import org.firstinspires.ftc.teamcode.drive.OGCode.LiftController;
 import org.firstinspires.ftc.teamcode.drive.OGCode.RobotController;
 import org.firstinspires.ftc.teamcode.drive.OGCode.RobotMap;
 
+import org.firstinspires.ftc.teamcode.drive.OGCode.Vision.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
+import org.openftc.apriltag.AprilTagDetection;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -41,6 +47,23 @@ public class Stanga5_1 extends LinearOpMode {
         PLACE_STACK_CONE,
         PARK
     }
+
+    OpenCvCamera camera;
+    AprilTagDetectionPipeline aprilTagDetectionPipeline;
+    static final double FEET_PER_METER = 3.28084;
+
+    double fx = 578.272;
+    double fy = 578.272;
+    double cx = 402.145;
+    double cy = 221.506;
+
+    double tagsize = 0.166; //m
+
+    // Tag IDs of sleeve
+    int left = 5;
+    int middle = 8;
+    int right = 19;
+
     public static double x_PLACE_PRELOAD = -27.5, y_PLACE_PRELOAD = -5, Angle_PLACE_PRELOAD = 240, backPreload = 43;
     public static double x_GTS_FIRST_LT1 = -31, y_GTS_FIRST_LT1 = -7.5,
             x_GTS_FIRST_STS = -40, y_GTS_FIRST_STS = -12, Angle_GTS_FIRST = 180,
@@ -50,9 +73,31 @@ public class Stanga5_1 extends LinearOpMode {
     int junctionHeight = 0;
     ElapsedTime TIMERGLOBAL = new ElapsedTime(), timerRetract = new ElapsedTime(), timerLift =new ElapsedTime() , timeCollect = new ElapsedTime();
 
+    AprilTagDetection tagOfInterest = null;
 
     @Override
     public void runOpMode() throws InterruptedException {
+
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
+        aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+
+        camera.setPipeline(aprilTagDetectionPipeline);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+        {
+            @Override
+            public void onOpened()
+            {
+                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+            }
+
+            @Override
+            public void onError(int errorCode)
+            {
+
+            }
+        });
+
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         RobotMap robot = new RobotMap(hardwareMap);
         List<LynxModule> allHubs = hardwareMap.getAll(LynxModule.class);
@@ -115,6 +160,60 @@ public class Stanga5_1 extends LinearOpMode {
                 .build();
         while (!isStarted()&&!isStopRequested())
         {
+
+            ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+
+            if(currentDetections.size() != 0)
+            {
+                boolean tagFound = false;
+
+                for(AprilTagDetection tag : currentDetections)
+                {
+                    if(tag.id == left || tag.id == middle || tag.id == right)
+                    {
+                        tagOfInterest = tag;
+                        tagFound = true;
+                        break;
+                    }
+                }
+
+                if(tagFound)
+                {
+                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
+//                tagToTelemetry(tagOfInterest);
+                }
+                else
+                {
+                    telemetry.addLine("Don't see tag of interest :(");
+
+                    if(tagOfInterest == null)
+                    {
+                        telemetry.addLine("(The tag has never been seen)");
+                    }
+                    else
+                    {
+                        telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+//                    tagToTelemetry(tagOfInterest);
+                    }
+                }
+
+            }
+            else
+            {
+                telemetry.addLine("Don't see tag of interest :(");
+
+                if(tagOfInterest == null)
+                {
+                    telemetry.addLine("(The tag has never been seen)");
+                }
+                else
+                {
+                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
+//                tagToTelemetry(tagOfInterest);
+                }
+
+            }
+
             telemetry.addLine("Init Complete");
             telemetry.update();
             sleep(50);
@@ -122,6 +221,7 @@ public class Stanga5_1 extends LinearOpMode {
         waitForStart();
         if (isStopRequested()) return;
         while (opModeIsActive() && !isStopRequested())
+
         {
             if (status == STROBOT.START)
             {
@@ -209,6 +309,18 @@ public class Stanga5_1 extends LinearOpMode {
             else
             if (status == STROBOT.PARK)
             {
+                if(tagOfInterest.id == left)
+                {
+                    CAZ = 1;
+                }
+                if(tagOfInterest.id == middle)
+                {
+                    CAZ = 2;
+                }
+                if(tagOfInterest.id == right)
+                {
+                    CAZ = 3;
+                }
                 if (CAZ == 1)
                 {
                     drive.followTrajectorySequenceAsync(PARK_1);
