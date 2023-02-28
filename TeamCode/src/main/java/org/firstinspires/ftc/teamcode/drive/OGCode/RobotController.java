@@ -54,8 +54,8 @@ public class RobotController {
                 {
                     if (timerPickUpCone.seconds()>timerTransferColectare)
                     {
-                        fourBarController.CurrentStatus = FourBarController.fourBarStatus.INTER_POSITION;
                         liftController.CurrentStatus = LiftController.liftStatus.POLE;
+                        fourBarController.CurrentStatus = FourBarController.fourBarStatus.INTER_POSITION;
                         ghidajController.CurrentStatus = GhidajController.ghidajStatus.OUTTAKE;
                         CurrentStatus = START;
                     }

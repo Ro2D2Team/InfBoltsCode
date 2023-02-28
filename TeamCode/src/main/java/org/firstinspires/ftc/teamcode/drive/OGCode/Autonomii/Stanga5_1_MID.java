@@ -41,10 +41,10 @@ public class Stanga5_1_MID extends LinearOpMode {
         PLACE_STACK_CONE,
         PARK
     }
-    public static double x_PLACE_PRELOAD = -27.5, y_PLACE_PRELOAD = -5.5, Angle_PLACE_PRELOAD = 225, backPreload=43;
+    public static double x_PLACE_PRELOAD = -27.5, y_PLACE_PRELOAD = -5, Angle_PLACE_PRELOAD = 240, backPreload=43;
     public static double x_GTS_FIRST_LT1 = -31, y_GTS_FIRST_LT1 = -7.5,
             x_GTS_FIRST_STS=-40, y_GTS_FIRST_STS=-14, Angle_GTS_FIRST=180,
-            x_GTS_FIRST_LT2 = -65, y_GTS_FIRST_LT2 = -14;
+            x_GTS_FIRST_LT2 = -64.5, y_GTS_FIRST_LT2 = -14;
     public static double x_GTS_FIRST_SECOND_LT1 = -31, y_GTS_FIRST_SECOND_LT1 = -18;
     public static double x_PLACE_FIRST_LT1 = -40, y_PLACE_FIRST_LT1 =-14,
             x_PLACE_FIRST_STS = -29, y_PLACE_FIRST_STS = -19, angle_PLACE_FIRST_STS = 155;
@@ -74,7 +74,7 @@ public class Stanga5_1_MID extends LinearOpMode {
         liftController.CurrentStatus = LiftController.liftStatus.GROUND;
         ghidajController.CurrentStatus = GhidajController.ghidajStatus.INTAKE;
         robot.servoGheara.setPosition(0.5);
-        int nr=0,NRCON = 5, CAZ = 2;
+        int nr=0,NRCON = 5, CAZ = 1;
         ElapsedTime timePLACE_PRELOAD = new ElapsedTime();
         Pose2d startPose = new Pose2d(-35, -63, Math.toRadians(270));
         drive.setPoseEstimate(startPose);
@@ -112,7 +112,7 @@ public class Stanga5_1_MID extends LinearOpMode {
                 .lineToLinearHeading(new Pose2d(-38.5,-10,Math.toRadians(90)))
                 .build();
         TrajectorySequence PARK_3 = drive.trajectorySequenceBuilder(PLACE_FIRST.end())
-                .lineToLinearHeading(new Pose2d(-10,-10,Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(-15,-10,Math.toRadians(90)))
                 .build();
         while (!isStarted()&&!isStopRequested())
         {

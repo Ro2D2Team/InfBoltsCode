@@ -73,7 +73,7 @@ public class Stanga5_1 extends LinearOpMode {
         liftController.CurrentStatus = LiftController.liftStatus.GROUND;
         ghidajController.CurrentStatus = GhidajController.ghidajStatus.INTAKE;
         robot.servoGheara.setPosition(0.5);
-        int nr=0,NRCON = 5, CAZ = 3;
+        int nr=0,NRCON = 5, CAZ = 1;
         ElapsedTime timePLACE_PRELOAD = new ElapsedTime();
         Pose2d startPose = new Pose2d(-35, -63, Math.toRadians(270));
         drive.setPoseEstimate(startPose);
@@ -108,7 +108,7 @@ public class Stanga5_1 extends LinearOpMode {
                 .lineTo(new Vector2d(x_GTS_FIRST_LT2,y_GTS_FIRST_LT2))
                 .build();
         TrajectorySequence PARK_2 = drive.trajectorySequenceBuilder(PLACE_FIRST.end())
-                .lineToLinearHeading(new Pose2d(-38.5,-15,Math.toRadians(270)))
+                .lineToLinearHeading(new Pose2d(-38.5,-12.5,Math.toRadians(270)))
                 .build();
         TrajectorySequence PARK_3 = drive.trajectorySequenceBuilder(PLACE_FIRST.end())
                 .lineToLinearHeading(new Pose2d(-12,-10,Math.toRadians(270)))
