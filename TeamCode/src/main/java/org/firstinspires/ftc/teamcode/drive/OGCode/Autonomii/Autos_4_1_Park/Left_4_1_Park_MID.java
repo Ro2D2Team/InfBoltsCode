@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.drive.OGCode.Autonomii;
+package org.firstinspires.ftc.teamcode.drive.OGCode.Autonomii.Autos_4_1_Park;
 
 import static org.firstinspires.ftc.teamcode.drive.OGCode.RobotController.RobotControllerStatus.PICK_UP_CONE;
 
@@ -18,7 +18,6 @@ import org.firstinspires.ftc.teamcode.drive.OGCode.GhidajController;
 import org.firstinspires.ftc.teamcode.drive.OGCode.LiftController;
 import org.firstinspires.ftc.teamcode.drive.OGCode.RobotController;
 import org.firstinspires.ftc.teamcode.drive.OGCode.RobotMap;
-
 import org.firstinspires.ftc.teamcode.drive.OGCode.Vision.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
@@ -34,7 +33,7 @@ import java.util.List;
 @Config
 @Autonomous(group = "drive")
 
-public class Dreapta5_1 extends LinearOpMode {
+public class Left_4_1_Park_MID extends LinearOpMode {
     enum STROBOT
     {
         START,
@@ -64,12 +63,13 @@ public class Dreapta5_1 extends LinearOpMode {
     int middle = 8;
     int right = 19;
 
-    public static double x_PLACE_PRELOAD = 27.5, y_PLACE_PRELOAD = -5.5, Angle_PLACE_PRELOAD = 315, backPreload = 43;
-    public static double x_GTS_FIRST_LT1 = 31, y_GTS_FIRST_LT1 = -7,
-            x_GTS_FIRST_STS= 35, y_GTS_FIRST_STS= -10, Angle_GTS_FIRST = 0,
-            x_GTS_FIRST_LT2 = 65, y_GTS_FIRST_LT2 = -11;
-    public static double x_PLACE_FIRST_LT1 = 40, y_PLACE_FIRST_LT1 = -11,
-            x_PLACE_FIRST_STS = 29, y_PLACE_FIRST_STS = -7, angle_PLACE_FIRST_STS = 315;
+    public static double x_PLACE_PRELOAD = -27.5, y_PLACE_PRELOAD = -5, Angle_PLACE_PRELOAD = 240, backPreload=43;
+    public static double x_GTS_FIRST_LT1 = -31, y_GTS_FIRST_LT1 = -7.5,
+            x_GTS_FIRST_STS=-40, y_GTS_FIRST_STS=-14, Angle_GTS_FIRST=180,
+            x_GTS_FIRST_LT2 = -64.5, y_GTS_FIRST_LT2 = -14;
+    public static double x_GTS_FIRST_SECOND_LT1 = -31, y_GTS_FIRST_SECOND_LT1 = -18;
+    public static double x_PLACE_FIRST_LT1 = -40, y_PLACE_FIRST_LT1 =-14,
+            x_PLACE_FIRST_STS = -29, y_PLACE_FIRST_STS = -19, angle_PLACE_FIRST_STS = 155;
     int junctionHeight = 0;
     ElapsedTime TIMERGLOBAL = new ElapsedTime(), timerRetract = new ElapsedTime(), timerLift =new ElapsedTime() , timeCollect = new ElapsedTime();
 
@@ -118,9 +118,9 @@ public class Dreapta5_1 extends LinearOpMode {
         liftController.CurrentStatus = LiftController.liftStatus.GROUND;
         ghidajController.CurrentStatus = GhidajController.ghidajStatus.INTAKE;
         robot.servoGheara.setPosition(0.5);
-        int nr=0,NRCON = 5, CAZ = 3;
+        int nr=0,NRCON = 5, CAZ = 1;
         ElapsedTime timePLACE_PRELOAD = new ElapsedTime();
-        Pose2d startPose = new Pose2d(35, -63, Math.toRadians(270));
+        Pose2d startPose = new Pose2d(-35, -63, Math.toRadians(270));
         drive.setPoseEstimate(startPose);
         STROBOT status = STROBOT.START;
         TrajectorySequence PLACE_PRELOAD = drive.trajectorySequenceBuilder(startPose)
@@ -131,32 +131,32 @@ public class Dreapta5_1 extends LinearOpMode {
                     junctionHeight = 0;
                     robotController.CurrentStatus = PICK_UP_CONE;
                 })
-                .splineToSplineHeading(new Pose2d(x_PLACE_PRELOAD,y_PLACE_PRELOAD,Math.toRadians(Angle_PLACE_PRELOAD)),Math.toRadians(135))
-                .build(); // merge de la inceput sa puna preload-u
+                .splineToSplineHeading(new Pose2d(x_PLACE_PRELOAD,y_PLACE_PRELOAD,Math.toRadians(Angle_PLACE_PRELOAD)),Math.toRadians(45))
+                .build();
         TrajectorySequence GTS_FIRST = drive.trajectorySequenceBuilder(PLACE_PRELOAD.end())
                 .lineTo(new Vector2d(x_GTS_FIRST_LT1, y_GTS_FIRST_LT1))
                 .splineToSplineHeading(new Pose2d(x_GTS_FIRST_STS, y_GTS_FIRST_STS, Math.toRadians(Angle_GTS_FIRST)), Math.toRadians(Angle_GTS_FIRST))
                 .lineTo(new Vector2d(x_GTS_FIRST_LT2,y_GTS_FIRST_LT2))
-                .build(); // merge de la junction la stack
+                .build();
         TrajectorySequence PLACE_FIRST = drive.trajectorySequenceBuilder(GTS_FIRST.end())
                 .lineTo(new Vector2d(x_PLACE_FIRST_LT1, y_PLACE_FIRST_LT1))
-                .splineToSplineHeading(new Pose2d(x_PLACE_FIRST_STS, y_PLACE_FIRST_STS, Math.toRadians(angle_PLACE_FIRST_STS)), Math.toRadians(170))
-                .build(); // merge de la stack la junction
+                .splineToSplineHeading(new Pose2d(x_PLACE_FIRST_STS, y_PLACE_FIRST_STS, Math.toRadians(angle_PLACE_FIRST_STS)), Math.toRadians(345))
+                .build();
         TrajectorySequence GTS_FIRST_SECOND = drive.trajectorySequenceBuilder(PLACE_FIRST.end())
-                .lineTo(new Vector2d(x_GTS_FIRST_LT1, y_GTS_FIRST_LT1))
+                .lineTo(new Vector2d(x_GTS_FIRST_SECOND_LT1, y_GTS_FIRST_SECOND_LT1))
                 .splineToSplineHeading(new Pose2d(x_GTS_FIRST_STS, y_GTS_FIRST_STS, Math.toRadians(Angle_GTS_FIRST)), Math.toRadians(Angle_GTS_FIRST))
                 .lineTo(new Vector2d(x_GTS_FIRST_LT2,y_GTS_FIRST_LT2))
-                .build(); // merge de la junction la stack
-        TrajectorySequence PARK_3 = drive.trajectorySequenceBuilder(PLACE_FIRST.end())
+                .build();
+        TrajectorySequence PARK_1 = drive.trajectorySequenceBuilder(PLACE_FIRST.end())
                 .lineTo(new Vector2d(x_GTS_FIRST_LT1, y_GTS_FIRST_LT1))
                 .splineToSplineHeading(new Pose2d(x_GTS_FIRST_STS, y_GTS_FIRST_STS, Math.toRadians(Angle_GTS_FIRST)), Math.toRadians(Angle_GTS_FIRST))
                 .lineTo(new Vector2d(x_GTS_FIRST_LT2,y_GTS_FIRST_LT2))
                 .build();
         TrajectorySequence PARK_2 = drive.trajectorySequenceBuilder(PLACE_FIRST.end())
-                .lineToLinearHeading(new Pose2d(35,-10,Math.toRadians(270)))
+                .lineToLinearHeading(new Pose2d(-38.5,-10,Math.toRadians(90)))
                 .build();
-        TrajectorySequence PARK_1 = drive.trajectorySequenceBuilder(PLACE_FIRST.end())
-                .lineToLinearHeading(new Pose2d(12,-15,Math.toRadians(270)))
+        TrajectorySequence PARK_3 = drive.trajectorySequenceBuilder(PLACE_FIRST.end())
+                .lineToLinearHeading(new Pose2d(-15,-10,Math.toRadians(90)))
                 .build();
         while (!isStarted()&&!isStopRequested())
         {
@@ -291,7 +291,7 @@ public class Dreapta5_1 extends LinearOpMode {
                 if (TIMERGLOBAL.seconds()>1.2)
                 {
                     liftController.CurrentStatus = LiftController.liftStatus.POLE;
-                    junctionHeight = 0;
+                    junctionHeight = 1;
                 }
                 if (TIMERGLOBAL.seconds()>1.75)
                 {
