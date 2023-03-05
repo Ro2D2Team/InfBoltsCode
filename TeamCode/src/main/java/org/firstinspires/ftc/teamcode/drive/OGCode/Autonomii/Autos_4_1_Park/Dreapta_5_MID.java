@@ -31,9 +31,9 @@ import java.util.List;
 
 
 @Config
-@Autonomous(group = "drive")
+@Autonomous(group = "b")
 
-public class Left_5_1_Park_HIGH extends LinearOpMode {
+public class Dreapta_5_MID extends LinearOpMode {
     enum STROBOT
     {
         START,
@@ -63,15 +63,15 @@ public class Left_5_1_Park_HIGH extends LinearOpMode {
     int middle = 8;
     int right = 19;
 
-    public static double x_PLACE_PRELOAD = -30, y_PLACE_PRELOAD = 0, Angle_PLACE_PRELOAD = 200, backPreload = 35;
-    public static double x_GTS_FIRST_LT1 = -31, y_GTS_FIRST_LT1 = -12,
-            x_GTS_FIRST_STS = -40, y_GTS_FIRST_STS = -14, Angle_GTS_FIRST = 180,
-            x_GTS_FIRST_LT2 = -57, y_GTS_FIRST_LT2 = -14;
-    public static double x_PLACE_FIRST_LT1 = -50, y_PLACE_FIRST_LT1 = -12,
-            x_PLACE_FIRST_STS = -32.5, y_PLACE_FIRST_STS = 0, angle_PLACE_FIRST_STS = 220;
-
+    public static double x_PLACE_PRELOAD = 27.5, y_PLACE_PRELOAD = -5, Angle_PLACE_PRELOAD = 300, backPreload = 43;
+    public static double x_GTS_FIRST_LT1 = 31, y_GTS_FIRST_LT1 = -7.5,
+            x_GTS_FIRST_STS = 40, y_GTS_FIRST_STS = -12, Angle_GTS_FIRST = 0,
+            x_GTS_FIRST_LT2 = 65, y_GTS_FIRST_LT2 = -12;
+    public static double x_GTS_FIRST_SECOND_LT1 = 31, y_GTS_FIRST_SECOND_LT1 = -18;
+    public static double x_PLACE_FIRST_LT1 = 40, y_PLACE_FIRST_LT1 = -14,
+            x_PLACE_FIRST_STS = 29, y_PLACE_FIRST_STS = -19, angle_PLACE_FIRST_STS = 25;
     int junctionHeight = 0;
-    ElapsedTime TIMERGLOBAL = new ElapsedTime(), timerRetract = new ElapsedTime(), timerLift =new ElapsedTime() , timeCollect = new ElapsedTime();
+    ElapsedTime TIMERGLOBAL = new ElapsedTime(), timerRetract = new ElapsedTime(), timerLift = new ElapsedTime() , timeCollect = new ElapsedTime();
 
     AprilTagDetection tagOfInterest = null;
 
@@ -118,20 +118,20 @@ public class Left_5_1_Park_HIGH extends LinearOpMode {
         liftController.CurrentStatus = LiftController.liftStatus.GROUND;
         ghidajController.CurrentStatus = GhidajController.ghidajStatus.INTAKE;
         robot.servoGheara.setPosition(0.5);
-        int nr = 0,NRCON = 6, CAZ = 1;
+        int nr=0, NRCON = 5, CAZ = 3;
         ElapsedTime timePLACE_PRELOAD = new ElapsedTime();
-        Pose2d startPose = new Pose2d(-35, -63, Math.toRadians(270));
+        Pose2d startPose = new Pose2d(35, -63, Math.toRadians(270));
         drive.setPoseEstimate(startPose);
         STROBOT status = STROBOT.START;
         TrajectorySequence PLACE_PRELOAD = drive.trajectorySequenceBuilder(startPose)
                 .setReversed(true)
                 .back(backPreload)
-                .addTemporalMarker(1, ()->{
+                .addTemporalMarker(1.5, ()->{
                     liftController.CurrentStatus = LiftController.liftStatus.POLE;
                     junctionHeight = 0;
                     robotController.CurrentStatus = PICK_UP_CONE;
                 })
-                .splineToSplineHeading(new Pose2d(x_PLACE_PRELOAD,y_PLACE_PRELOAD,Math.toRadians(Angle_PLACE_PRELOAD)),Math.toRadians(45))
+                .splineToSplineHeading(new Pose2d(x_PLACE_PRELOAD,y_PLACE_PRELOAD,Math.toRadians(Angle_PLACE_PRELOAD)),Math.toRadians(135))
                 .build(); // merge de la inceput sa puna preload-u
         TrajectorySequence GTS_FIRST = drive.trajectorySequenceBuilder(PLACE_PRELOAD.end())
                 .lineTo(new Vector2d(x_GTS_FIRST_LT1, y_GTS_FIRST_LT1))
@@ -140,26 +140,27 @@ public class Left_5_1_Park_HIGH extends LinearOpMode {
                 .build(); // merge de la junction la stack
         TrajectorySequence PLACE_FIRST = drive.trajectorySequenceBuilder(GTS_FIRST.end())
                 .lineTo(new Vector2d(x_PLACE_FIRST_LT1, y_PLACE_FIRST_LT1))
-                .splineToSplineHeading(new Pose2d(x_PLACE_FIRST_STS, y_PLACE_FIRST_STS, Math.toRadians(angle_PLACE_FIRST_STS)), Math.toRadians(110))
+                .splineToSplineHeading(new Pose2d(x_PLACE_FIRST_STS, y_PLACE_FIRST_STS, Math.toRadians(angle_PLACE_FIRST_STS)), Math.toRadians(170))
                 .build(); // merge de la stack la junction
         TrajectorySequence GTS_FIRST_SECOND = drive.trajectorySequenceBuilder(PLACE_FIRST.end())
-                .lineTo(new Vector2d(x_GTS_FIRST_LT1, y_GTS_FIRST_LT1))
+                .lineTo(new Vector2d(x_GTS_FIRST_SECOND_LT1, y_GTS_FIRST_SECOND_LT1))
                 .splineToSplineHeading(new Pose2d(x_GTS_FIRST_STS, y_GTS_FIRST_STS, Math.toRadians(Angle_GTS_FIRST)), Math.toRadians(Angle_GTS_FIRST))
                 .lineTo(new Vector2d(x_GTS_FIRST_LT2,y_GTS_FIRST_LT2))
                 .build(); // merge de la junction la stack
-        TrajectorySequence PARK_1 = drive.trajectorySequenceBuilder(PLACE_FIRST.end())
+        TrajectorySequence PARK_3 = drive.trajectorySequenceBuilder(PLACE_FIRST.end())
                 .lineTo(new Vector2d(x_GTS_FIRST_LT1, y_GTS_FIRST_LT1))
                 .splineToSplineHeading(new Pose2d(x_GTS_FIRST_STS, y_GTS_FIRST_STS, Math.toRadians(Angle_GTS_FIRST)), Math.toRadians(Angle_GTS_FIRST))
                 .lineTo(new Vector2d(x_GTS_FIRST_LT2,y_GTS_FIRST_LT2))
                 .build();
         TrajectorySequence PARK_2 = drive.trajectorySequenceBuilder(PLACE_FIRST.end())
-                .lineToLinearHeading(new Pose2d(-38.5,-10,Math.toRadians(270)))
+                .lineToLinearHeading(new Pose2d(35,-10,Math.toRadians(90)))
                 .build();
-        TrajectorySequence PARK_3 = drive.trajectorySequenceBuilder(PLACE_FIRST.end())
-                .lineToLinearHeading(new Pose2d(-12,-10,Math.toRadians(270)))
+        TrajectorySequence PARK_1 = drive.trajectorySequenceBuilder(PLACE_FIRST.end())
+                .lineToLinearHeading(new Pose2d(13,-10,Math.toRadians(90)))
                 .build();
         while (!isStarted()&&!isStopRequested())
         {
+
             ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
             if(currentDetections.size() != 0)
@@ -178,37 +179,67 @@ public class Left_5_1_Park_HIGH extends LinearOpMode {
 
                 if(tagFound)
                 {
-                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
-//                tagToTelemetry(tagOfInterest);
+                    if(tagOfInterest.id == left)
+                    {
+                        telemetry.addLine("Sleeve detected! Case: 1");
+                    }
+                    if(tagOfInterest.id == middle)
+                    {
+                        telemetry.addLine("Sleeve detected! Case: 2");
+                    }
+                    if(tagOfInterest.id == right)
+                    {
+                        telemetry.addLine("Sleeve detected! Case: 3");
+                    }
                 }
                 else
                 {
-                    telemetry.addLine("Don't see tag of interest :(");
+                    telemetry.addLine("Sleeve not in sight!");
 
                     if(tagOfInterest == null)
                     {
-                        telemetry.addLine("(The tag has never been seen)");
+                        telemetry.addLine("Sleeve never detected. Default case is: 2");
                     }
                     else
                     {
-                        telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-//                    tagToTelemetry(tagOfInterest);
+                        if(tagOfInterest.id == left)
+                        {
+                            telemetry.addLine("Last detection case was: 1");
+                        }
+                        if(tagOfInterest.id == middle)
+                        {
+                            telemetry.addLine("Last detection case was: 2");
+                        }
+                        if(tagOfInterest.id == right)
+                        {
+                            telemetry.addLine("Last detection case was: 3");
+                        }
                     }
                 }
 
             }
             else
             {
-                telemetry.addLine("Don't see tag of interest :(");
+                telemetry.addLine("Sleeve not in sight!");
 
                 if(tagOfInterest == null)
                 {
-                    telemetry.addLine("(The tag has never been seen)");
+                    telemetry.addLine("Sleeve never detected. Default case is: 2");
                 }
                 else
                 {
-                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-//                tagToTelemetry(tagOfInterest);
+                    if(tagOfInterest.id == left)
+                    {
+                        telemetry.addLine("Last detection case was: 1");
+                    }
+                    if(tagOfInterest.id == middle)
+                    {
+                        telemetry.addLine("Last detection case was: 2");
+                    }
+                    if(tagOfInterest.id == right)
+                    {
+                        telemetry.addLine("Last detection case was: 3");
+                    }
                 }
 
             }
@@ -248,7 +279,7 @@ public class Left_5_1_Park_HIGH extends LinearOpMode {
                     if (TIMERGLOBAL.seconds()>0.75)
                     {
                         TIMERGLOBAL.reset();
-                        if (NRCON==6)
+                        if (NRCON==5)
                         {
                             drive.followTrajectorySequenceAsync(GTS_FIRST);
                         }
@@ -266,7 +297,7 @@ public class Left_5_1_Park_HIGH extends LinearOpMode {
                 if (TIMERGLOBAL.seconds()>0.75)
                 {
                     liftController.CurrentStatus = LiftController.liftStatus.POLE;
-                    junctionHeight = NRCON+2;
+                    junctionHeight = NRCON+3;
                 }
                 if (!drive.isBusy())
                 {
@@ -287,10 +318,10 @@ public class Left_5_1_Park_HIGH extends LinearOpMode {
             else
             if (status == STROBOT.PLACE_STACK_CONE)
             {
-                if (TIMERGLOBAL.seconds()>1)
+                if (TIMERGLOBAL.seconds()>1.2)
                 {
                     liftController.CurrentStatus = LiftController.liftStatus.POLE;
-                    junctionHeight = 0;
+                    junctionHeight = 1;
                 }
                 if (TIMERGLOBAL.seconds()>1.75)
                 {
@@ -307,17 +338,22 @@ public class Left_5_1_Park_HIGH extends LinearOpMode {
             else
             if (status == STROBOT.PARK)
             {
-                if(tagOfInterest.id == left)
-                {
-                    CAZ = 1;
-                }
-                if(tagOfInterest.id == middle)
+                if(tagOfInterest == null)
                 {
                     CAZ = 2;
-                }
-                if(tagOfInterest.id == right)
-                {
-                    CAZ = 3;
+                } else {
+                    if(tagOfInterest.id == left)
+                    {
+                        CAZ = 1;
+                    } else
+                    if(tagOfInterest.id == middle)
+                    {
+                        CAZ = 2;
+                    }
+                    if(tagOfInterest.id == right)
+                    {
+                        CAZ = 3;
+                    }
                 }
                 if (CAZ == 1)
                 {

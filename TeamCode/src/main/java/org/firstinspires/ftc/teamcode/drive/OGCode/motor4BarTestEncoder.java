@@ -14,7 +14,7 @@ import java.util.List;
  * This is a simple routine to test translational drive capabilities.
  */
 @Config
-@Autonomous(group = "Testers")
+//@Autonomous(group = "Testers")
 public class motor4BarTestEncoder extends LinearOpMode {
     public static double DISTANCE = 60; // in
     public static double Kp = 0;

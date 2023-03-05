@@ -1,5 +1,5 @@
 package org.firstinspires.ftc.teamcode.drive.OGCode;
-import com.qualcomm.hardware.bosch.BNO055IMU;
+//import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -10,9 +10,9 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.List;
 
-@TeleOp(name="SampleOpModeHulk", group="Linear Opmode")
+@TeleOp(name="Hulk_Smash", group="Linear Opmode")
 
-public class SampleOpModeHulk extends  LinearOpMode {
+public class Hulk_Smash extends  LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime() , timeGetVoltage = new ElapsedTime();
 
     double  PrecisionDenominator=1, PrecisionDenominator2=1.75;
@@ -55,32 +55,32 @@ public class SampleOpModeHulk extends  LinearOpMode {
         rightFront.setPower(frontRightPower);
         rightBack.setPower(backRightPower);
     }
-    public void fieldCentricDrive(BNO055IMU imu,DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack , double LeftTrigger , double RightTrigger)
-    {
-        double y = -gamepad1.left_stick_y; // Remember, this is reversed!
-        double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
-        double rx = gamepad1.right_stick_x - LeftTrigger + RightTrigger;
-
-        // Read inverse IMU heading, as the IMU heading is CW positive
-        double botHeading = -imu.getAngularOrientation().firstAngle;
-
-        double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
-        double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
-
-        // Denominator is the largest motor power (absolute value) or 1
-        // This ensures all the powers maintain the same ratio, but only when
-        // at least one is out of the range [-1, 1]
-        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-        double frontLeftPower = (rotY + rotX + rx) / denominator;
-        double backLeftPower = (rotY - rotX + rx) / denominator;
-        double frontRightPower = (rotY - rotX - rx) / denominator;
-        double backRightPower = (rotY + rotX - rx) / denominator;
-
-        leftFront.setPower(frontLeftPower);
-        leftBack.setPower(backLeftPower);
-        rightFront.setPower(frontRightPower);
-        rightBack.setPower(backRightPower);
-    }
+//    public void fieldCentricDrive(BNO055IMU imu,DcMotor leftFront, DcMotor leftBack, DcMotor rightFront, DcMotor rightBack , double LeftTrigger , double RightTrigger)
+//    {
+//        double y = -gamepad1.left_stick_y; // Remember, this is reversed!
+//        double x = gamepad1.left_stick_x * 1.1; // Counteract imperfect strafing
+//        double rx = gamepad1.right_stick_x - LeftTrigger + RightTrigger;
+//
+//        // Read inverse IMU heading, as the IMU heading is CW positive
+//        double botHeading = -imu.getAngularOrientation().firstAngle;
+//
+//        double rotX = x * Math.cos(botHeading) - y * Math.sin(botHeading);
+//        double rotY = x * Math.sin(botHeading) + y * Math.cos(botHeading);
+//
+//        // Denominator is the largest motor power (absolute value) or 1
+//        // This ensures all the powers maintain the same ratio, but only when
+//        // at least one is out of the range [-1, 1]
+//        double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
+//        double frontLeftPower = (rotY + rotX + rx) / denominator;
+//        double backLeftPower = (rotY - rotX + rx) / denominator;
+//        double frontRightPower = (rotY - rotX - rx) / denominator;
+//        double backRightPower = (rotY + rotX - rx) / denominator;
+//
+//        leftFront.setPower(frontLeftPower);
+//        leftBack.setPower(backLeftPower);
+//        rightFront.setPower(frontRightPower);
+//        rightBack.setPower(backRightPower);
+//    }
 
     double Clip(double Speed,double lim)
     {
@@ -130,7 +130,7 @@ public class SampleOpModeHulk extends  LinearOpMode {
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftBack.setDirection(DcMotor.Direction.REVERSE);
 
-       // leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        // leftBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //rightBack.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -171,6 +171,7 @@ public class SampleOpModeHulk extends  LinearOpMode {
                 PrecisionDenominator=1;
                 PrecisionDenominator2=1.75;
             }
+
             /*if (!previousGamepad1.circle && currentGamepad1.circle)
             {
                if (outtakeStatus==0)
@@ -185,6 +186,7 @@ public class SampleOpModeHulk extends  LinearOpMode {
                }
 
             }*/
+
             if (!previousGamepad1.square && currentGamepad1.square)
             {
                 if (clawController.CurrentStatus == ClawController.closeClawStatus.CLOSED)

@@ -31,9 +31,9 @@ import java.util.List;
 
 
 @Config
-@Autonomous(group = "drive")
+@Autonomous(group = "b")
 
-public class Left_4_1_Park_MID extends LinearOpMode {
+public class Stanga_5_MID extends LinearOpMode {
     enum STROBOT
     {
         START,
@@ -179,37 +179,67 @@ public class Left_4_1_Park_MID extends LinearOpMode {
 
                 if(tagFound)
                 {
-                    telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
-//                tagToTelemetry(tagOfInterest);
+                    if(tagOfInterest.id == left)
+                    {
+                        telemetry.addLine("Sleeve detected! Case: 1");
+                    }
+                    if(tagOfInterest.id == middle)
+                    {
+                        telemetry.addLine("Sleeve detected! Case: 2");
+                    }
+                    if(tagOfInterest.id == right)
+                    {
+                        telemetry.addLine("Sleeve detected! Case: 3");
+                    }
                 }
                 else
                 {
-                    telemetry.addLine("Don't see tag of interest :(");
+                    telemetry.addLine("Sleeve not in sight!");
 
                     if(tagOfInterest == null)
                     {
-                        telemetry.addLine("(The tag has never been seen)");
+                        telemetry.addLine("Sleeve never detected. Default case is: 2");
                     }
                     else
                     {
-                        telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-//                    tagToTelemetry(tagOfInterest);
+                        if(tagOfInterest.id == left)
+                        {
+                            telemetry.addLine("Last detection case was: 1");
+                        }
+                        if(tagOfInterest.id == middle)
+                        {
+                            telemetry.addLine("Last detection case was: 2");
+                        }
+                        if(tagOfInterest.id == right)
+                        {
+                            telemetry.addLine("Last detection case was: 3");
+                        }
                     }
                 }
 
             }
             else
             {
-                telemetry.addLine("Don't see tag of interest :(");
+                telemetry.addLine("Sleeve not in sight!");
 
                 if(tagOfInterest == null)
                 {
-                    telemetry.addLine("(The tag has never been seen)");
+                    telemetry.addLine("Sleeve never detected. Default case is: 2");
                 }
                 else
                 {
-                    telemetry.addLine("\nBut we HAVE seen the tag before; last seen at:");
-//                tagToTelemetry(tagOfInterest);
+                    if(tagOfInterest.id == left)
+                    {
+                        telemetry.addLine("Last detection case was: 1");
+                    }
+                    if(tagOfInterest.id == middle)
+                    {
+                        telemetry.addLine("Last detection case was: 2");
+                    }
+                    if(tagOfInterest.id == right)
+                    {
+                        telemetry.addLine("Last detection case was: 3");
+                    }
                 }
 
             }
@@ -308,17 +338,22 @@ public class Left_4_1_Park_MID extends LinearOpMode {
             else
             if (status == STROBOT.PARK)
             {
-                if(tagOfInterest.id == left)
-                {
-                    CAZ = 1;
-                }
-                if(tagOfInterest.id == middle)
+                if(tagOfInterest == null)
                 {
                     CAZ = 2;
-                }
-                if(tagOfInterest.id == right)
-                {
-                    CAZ = 3;
+                } else {
+                    if(tagOfInterest.id == left)
+                    {
+                        CAZ = 1;
+                    } else
+                    if(tagOfInterest.id == middle)
+                    {
+                        CAZ = 2;
+                    }
+                    if(tagOfInterest.id == right)
+                    {
+                        CAZ = 3;
+                    }
                 }
                 if (CAZ == 1)
                 {

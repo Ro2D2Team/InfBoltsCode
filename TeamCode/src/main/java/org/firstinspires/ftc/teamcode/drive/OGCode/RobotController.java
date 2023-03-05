@@ -32,6 +32,7 @@ public class RobotController {
         GO_PLACE_FIRST_CONE_AUTO,
         INTER_GO_PLACE_FIRST_CONE_AUTO,
     }
+
     public double timerTransferColectare = 0.25, timerTransferOuttake=1, timerPlaceCone=1.4, timerGhidaj=3, timerPlace=0.4;
     public static RobotControllerStatus CurrentStatus = START, PreviousStatus = START;
     ElapsedTime timerPickUpCone = new ElapsedTime() , timerGO_PLACE = new ElapsedTime() ,TimerGO_PLACE2 = new ElapsedTime();

@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.util.List;
 
-@TeleOp(name="TestLift", group="Linear Opmode")
+//@TeleOp(name="TestLift", group="Linear Opmode")
 
 public class TestLift extends  LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime() , timeGetVoltage = new ElapsedTime();
